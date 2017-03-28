@@ -1,6 +1,7 @@
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var ReactNative = require('react-native');
 var {
   AppRegistry,
   StyleSheet,
@@ -12,11 +13,11 @@ var {
   ToolbarAndroid,
   DrawerLayoutAndroid,
   TouchableOpacity,
-} = React;
+} = ReactNative;
 
 var API_KEY = '&api_key=dc6zaTOxFJmzC';
 var API_GIPHY_URL = 'http://api.giphy.com/v1/gifs'
-var API_LIMIT = '&limit=15'
+var API_LIMIT = '&limit=16'
 
 var menuElems = ['Random', 'Trending'];
 
@@ -33,7 +34,7 @@ var Reactive = React.createClass({
     var imageUrl = image.images.fixed_width.url;
     var imageHeight = parseInt(image.images.fixed_width.height);
     return (
-      <View style={styles.row}>
+      <View style={[styles.row, {height: imageHeight}]}>
         <Image
           style={[styles.image, {height: imageHeight}]}
           source={{uri: imageUrl}}>
@@ -110,25 +111,22 @@ var Reactive = React.createClass({
         url = API_GIPHY_URL + '/search?q=' + query + API_LIMIT + API_KEY + offset;
       }
       fetch(url)
-      .then((res) => {
-        this.updateList(JSON.parse(res._bodyInit));
-      }).catch((err) => console.log(err));
+      .then(res => res.json())
+      .then(res => this.updateList(res))
+      .catch(err => console.log(err));
       this.drawer.closeDrawer();
     }
-
   });
 
   var styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#00bcd4',
+      backgroundColor: 'white',
     },
     row: {
-      borderWidth: 1,
       justifyContent: 'center',
       width: 185,
       alignItems: 'center',
-      borderColor: 'transparent'
     },
     list: {
       justifyContent: 'center',
